@@ -2,26 +2,30 @@
   lib,
   buildPythonPackage,
   fetchPypi,
-  glibcLocales,
   mpmath,
+  setuptools,
 
   # Reverse dependency
   sage,
 }:
 
-buildPythonPackage rec {
+buildPythonPackage (finalAttrs: {
   pname = "sympy";
   version = "1.14.0";
-  format = "setuptools";
+  pyproject = true;
 
   src = fetchPypi {
-    inherit pname version;
+    inherit (finalAttrs) pname version;
     hash = "sha256-09P+jfHloLQvDnvfUFQWl9vn0jdG6JSZDAMOKwXnJRc=";
   };
 
-  nativeCheckInputs = [ glibcLocales ];
+  build-system = [ setuptools ];
 
-  propagatedBuildInputs = [ mpmath ];
+  pythonRelaxDeps = [
+    "mpmath"
+  ];
+
+  dependencies = [ mpmath ];
 
   # tests take ~1h
   doCheck = false;
@@ -39,4 +43,4 @@ buildPythonPackage rec {
     maintainers = [ ];
     teams = [ lib.teams.sage ];
   };
-}
+})
