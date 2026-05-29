@@ -18,7 +18,7 @@ buildPythonPackage rec {
     hash = "sha256-KcmLSjVMQd7UdUzWp1iWe0Tvf89l5VvSiLWvg9CZVjA=";
   };
 
-  nativeBuildInputs = [ setuptools ];
+  build-system = [ setuptools ];
 
   nativeCheckInputs = [ unittestCheckHook ];
   unittestFlags = [ "-s" "tests" "-p" "test_exfat_raw_image.py" ];
