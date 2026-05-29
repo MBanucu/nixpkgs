@@ -3,6 +3,7 @@
   buildPythonPackage,
   fetchFromGitHub,
   setuptools,
+  unittestCheckHook,
 }:
 
 buildPythonPackage rec {
@@ -13,27 +14,20 @@ buildPythonPackage rec {
   src = fetchFromGitHub {
     owner = "MBanucu";
     repo = "exfat-raw";
-    rev = "v${version}";
+    tag = "v${version}";
     hash = "sha256-KcmLSjVMQd7UdUzWp1iWe0Tvf89l5VvSiLWvg9CZVjA=";
   };
 
   nativeBuildInputs = [ setuptools ];
 
-  doCheck = true;
+  nativeCheckInputs = [ unittestCheckHook ];
+  unittestFlags = [ "-s" "tests" "-p" "test_exfat_raw_image.py" ];
   pythonImportsCheck = [ "exfat_raw" ];
 
-  # Integration tests require sudo (losetup + mount) and are skipped
-  # in the Nix sandbox. Only sandbox-safe image-based tests are run.
-  checkPhase = ''
-    runHook preCheck
-    python -m unittest discover -s tests -p 'test_exfat_raw_image.py' -v
-    runHook postCheck
-  '';
-
-  meta = with lib; {
+  meta = {
     description = "Raw block-level read/write of exFAT filesystem timestamps (birth time, modification time)";
     homepage = "https://github.com/MBanucu/exfat-raw";
-    license = licenses.gpl3Only;
-    maintainers = with maintainers; [ mbanucu ];
+    license = lib.licenses.gpl3Only;
+    maintainers = with lib.maintainers; [ mbanucu ];
   };
 }
